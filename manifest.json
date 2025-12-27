@@ -1,0 +1,34 @@
+{
+    "manifest_version": 3,
+    "name": "Snappy - Screenshot Cropper",
+    "version": "1.0.0",
+    "description": "Capture screenshots of the visible tab, crop visually, and download as PNG.",
+    "permissions": [
+        "activeTab",
+        "scripting",
+        "downloads"
+    ],
+    "action": {
+        "default_popup": "popup.html",
+        "default_title": "Snappy Screenshot"
+    },
+    "icons": {
+        "16": "icons/icon16.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+    },
+    "background": {
+        "service_worker": "background.js"
+    },
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "styles.css",
+                "content.js"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
+    ]
+}

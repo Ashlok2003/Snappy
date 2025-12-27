@@ -1,0 +1,244 @@
+/**
+ * Snappy Premium Styles
+ * Ultra-modern, polished UI similar to linear.app or Vercel design systems.
+ */
+
+#snappy-container {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #fff;
+    user-select: none;
+    --snappy-bg: #1a1a1a;
+    --snappy-surface: #262626;
+    --snappy-border: #404040;
+    --snappy-accent: #3b82f6;
+    /* Vivid Blue */
+    --snappy-text: #e5e5e5;
+    --snappy-text-dim: #a3a3a3;
+    --snappy-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.45), 0 4px 8px -2px rgba(0, 0, 0, 0.2);
+    --snappy-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 1. Backdrop */
+#snappy-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483640;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+    /* Subtle blur behind everything */
+    cursor: crosshair;
+    transition: background-color 0.3s ease;
+}
+
+/* Canvas Layers */
+.snappy-canvas-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+
+#snappy-drawing-canvas {
+    z-index: 2147483642;
+    pointer-events: auto;
+}
+
+/* 2. Selection Box - "The Lens" */
+#snappy-selection {
+    position: fixed;
+    z-index: 2147483643;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+    /* The dark surrounding area */
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    display: none;
+    pointer-events: none;
+}
+
+/* Selection Handles (Visual only for now) */
+#snappy-selection::after,
+#snappy-selection::before,
+.snappy-handle-box::after,
+.snappy-handle-box::before {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 2px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+#snappy-selection::before {
+    top: -4px;
+    left: -4px;
+}
+
+#snappy-selection::after {
+    top: -4px;
+    right: -4px;
+}
+
+/* 3. The Toolbar - "Floating Island" */
+#snappy-toolbar {
+    position: fixed;
+    z-index: 2147483650;
+    background: var(--snappy-bg);
+    border: 1px solid var(--snappy-border);
+    border-radius: 12px;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: var(--snappy-shadow);
+
+    /* Initial State for Animation */
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+    transition: opacity 0.3s ease, transform 0.3s var(--snappy-ease);
+}
+
+#snappy-toolbar.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* Separators */
+.snappy-divider {
+    width: 1px;
+    height: 20px;
+    background: var(--snappy-border);
+    margin: 0 4px;
+}
+
+/* Buttons */
+.snappy-btn {
+    background: transparent;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    color: var(--snappy-text-dim);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s var(--snappy-ease);
+    position: relative;
+}
+
+.snappy-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2px;
+}
+
+.snappy-btn:hover {
+    background: var(--snappy-surface);
+    color: var(--snappy-text);
+    transform: translateY(-1px);
+}
+
+.snappy-btn:active {
+    transform: translateY(0) scale(0.95);
+}
+
+/* Active State */
+.snappy-btn.active {
+    background: var(--snappy-surface);
+    color: var(--snappy-accent);
+}
+
+.snappy-btn.active svg {
+    stroke: var(--snappy-accent);
+}
+
+/* Download Button (Primary) */
+.snappy-btn-primary {
+    background: var(--snappy-accent);
+    color: white;
+    width: auto;
+    padding: 0 16px;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.snappy-btn-primary:hover {
+    background: #2563eb;
+    /* Darker blue */
+    color: white;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.snappy-btn-primary.active {
+    color: white;
+    background: #2563eb;
+}
+
+/* Color Palette - Horizontal Scroll if needed, or compact grid */
+.snappy-colors {
+    display: flex;
+    gap: 6px;
+    padding: 0 4px;
+}
+
+.snappy-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.2s var(--snappy-ease), border-color 0.2s;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.snappy-color:hover {
+    transform: scale(1.1);
+}
+
+.snappy-color.active {
+    border-color: var(--snappy-bg);
+    box-shadow: 0 0 0 2px var(--snappy-accent);
+    /* Focus ring */
+    transform: scale(1.1);
+}
+
+/* Tooltips */
+#snappy-tooltip-label {
+    position: absolute;
+    bottom: 110%;
+    /* Above button */
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: black;
+    color: white;
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    opacity: 0;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: all 0.2s ease;
+    z-index: 2147483651;
+}
+
+.snappy-btn:hover #snappy-tooltip-label {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Text Input Editing */
+#snappy-text-input {
+    position: fixed;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    padding: 8px;
+    color: white;
+    font: 16px 'Inter', sans-serif;
+    z-index: 2147483649;
+    min-width: 100px;
+    outline: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(4px);
+}
