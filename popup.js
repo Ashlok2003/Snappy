@@ -43,17 +43,13 @@ async function handleCapture(mode) {
             window.close();
         }
         else if (mode === 'timer') {
-            // Tell content script to show countdown
-            await chrome.tabs.sendMessage(tab.id, { action: 'startTimer' });
+            // Tell content script to show countdown (fire and forget)
+            chrome.tabs.sendMessage(tab.id, { action: 'startTimer' });
             window.close();
         }
         else if (mode === 'full') {
             setStatus('Scrolling & Capturing...', '');
-            // Simple Full Page: Ask content script to scroll & coordinate
-            // For MVP, we pass control to background which is persistent
             chrome.runtime.sendMessage({ action: 'initFullPage', tabId: tab.id });
-            // Don't close window immediately so user sees status, or close and show progress in page
-            // Let's close and let content script show progress
             window.close();
         }
 

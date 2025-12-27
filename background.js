@@ -49,50 +49,83 @@ chrome.runtime.onMessage.addListener((msg, sender, res) => {
                 return;
             }
 
-            captureJob.totalHeight = metrics.totalHeight;
-            captureJob.viewportHeight = metrics.viewportHeight;
-            captureJob.devicePixelRatio = metrics.devicePixelRatio;
+            captureJob = {
+                tabId,
+                captures: [],
+                totalHeight: metrics.totalHeight,
+                viewportHeight: metrics.viewportHeight,
+                devicePixelRatio: metrics.devicePixelRatio || 1,
+                nextStitch: 'stitchAndDownload'  // Use new action
+            };
 
-            loopCapture();
+            // 1. Prepare (Hide Scrollbars)
+            chrome.tabs.sendMessage(tabId, { action: 'prepareFullPage' }, () => {
+                // Give it a moment to paint (150ms)
+                setTimeout(() => {
+                    // 2. Capture Y=0 Start
+                    chrome.tabs.captureVisibleTab(null, { format: 'png' }, (dataUrl) => {
+                        if (chrome.runtime.lastError || !dataUrl) {
+                            // Fallback to current visible capture if full page fails
+                            chrome.tabs.captureVisibleTab(null, { format: 'png' }, (fallbackDataUrl) => {
+                                if (chrome.runtime.lastError || !fallbackDataUrl) return;
+                                chrome.tabs.sendMessage(tabId, {
+                                    action: 'startCrop',
+                                    screenshot: fallbackDataUrl
+                                });
+                            });
+                            return;
+                        }
+                        captureJob.captures.push({ y: 0, dataUrl });
+                        console.log('Starting scroll loop...');
+                        loopCapture();
+                    });
+                }, 150);
+            });
         });
     }
 });
 
 function loopCapture() {
-    const { tabId, y, totalHeight, viewportHeight } = captureJob;
+    const { tabId } = captureJob;
 
-    // Check if done
-    if (y >= totalHeight) {
-        finishCapture();
-        return;
-    }
+    // 1. Tell Content to Scroll Down
+    chrome.tabs.sendMessage(tabId, { action: 'scrollNext' }, (res) => {
+        if (!res) {
+            finishCapture();
+            return;
+        }
 
-    // 1. Scroll
-    chrome.tabs.sendMessage(tabId, { action: 'scrollTo', y: y }, () => {
-        // 2. Wait for render (essential for sticky headers/lazy load)
+        const { moved, y } = res;
+
+        // If didn't move, we are done
+        if (!moved && captureJob.captures.length > 0) {
+            finishCapture();
+            return;
+        }
+
+        // 2. Wait for Smooth Scroll & Render
         setTimeout(() => {
             // 3. Capture
             chrome.tabs.captureVisibleTab(null, { format: 'png' }, (dataUrl) => {
                 if (chrome.runtime.lastError || !dataUrl) {
-                    // Fallback or abort? Let's finish what we have.
-                    finishCapture();
+                    finishCapture(); // Save what we have
                     return;
                 }
 
+                // Save this chunk at the CURRENT accurate Y
                 captureJob.captures.push({ y, dataUrl });
 
-                // 4. Next Step
-                captureJob.y += viewportHeight;
+                // 4. Continue
                 loopCapture();
             });
-        }, 500); // 500ms delay to be safe
+        }, 800); // 800ms for smooth scroll animation + network
     });
 }
 
 function finishCapture() {
     // Send all chunks to content script for stitching
     chrome.tabs.sendMessage(captureJob.tabId, {
-        action: 'stitchAndOpen',
+        action: 'stitchAndDownload',
         captures: captureJob.captures,
         totalHeight: captureJob.totalHeight,
         viewportHeight: captureJob.viewportHeight,
