@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Snappy Pro — Settings</title>
+    <style>
+        :root {
+            --bg: #1a1a1a;
+            --surface: #262626;
+            --border: #404040;
+            --accent: #3b82f6;
+            --text: #e5e5e5;
+            --text-dim: #a3a3a3;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 40px 16px;
+        }
+        .container { width: 100%; max-width: 480px; }
+        .header { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; }
+        .logo {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 10px; display: flex; align-items: center; justify-content: center;
+        }
+        .logo svg { width: 20px; height: 20px; color: white; }
+        h1 { font-size: 18px; font-weight: 600; }
+        .version { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .card-title { font-size: 13px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 16px; }
+        .field { margin-bottom: 16px; }
+        .field:last-child { margin-bottom: 0; }
+        label { display: block; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+        .radio-group { display: flex; gap: 8px; flex-wrap: wrap; }
+        .radio-option {
+            flex: 1; min-width: 70px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-dim);
+            transition: all 0.15s;
+            user-select: none;
+        }
+        .radio-option:hover { border-color: #555; color: var(--text); }
+        .radio-option.active { border-color: var(--accent); color: var(--accent); background: rgba(59,130,246,0.1); }
+        .radio-option input { display: none; }
+        .slider-row { display: flex; align-items: center; gap: 12px; }
+        input[type=range] {
+            flex: 1; -webkit-appearance: none; height: 4px;
+            background: var(--border); border-radius: 2px; outline: none;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 14px; height: 14px;
+            background: var(--accent); border-radius: 50%; cursor: pointer;
+        }
+        .slider-value { font-size: 13px; color: var(--text-dim); min-width: 32px; text-align: right; }
+        .save-btn {
+            width: 100%; padding: 12px;
+            background: var(--accent); color: white;
+            border: none; border-radius: 8px;
+            font-size: 14px; font-weight: 600;
+            cursor: pointer; transition: background 0.15s;
+        }
+        .save-btn:hover { background: #2563eb; }
+        #toast {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+            background: #22c55e; color: white;
+            padding: 8px 16px; border-radius: 8px;
+            font-size: 13px; opacity: 0; transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        #toast.show { opacity: 1; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+            </svg>
+        </div>
+        <div>
+            <h1>Snappy Pro Settings</h1>
+            <div class="version">v2.0.0</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Screenshot</div>
+        <div class="field">
+            <label>Timer Delay</label>
+            <div class="radio-group" id="timerGroup">
+                <label class="radio-option active" data-val="3">
+                    <input type="radio" name="timer" value="3"> 3s
+                </label>
+                <label class="radio-option" data-val="5">
+                    <input type="radio" name="timer" value="5"> 5s
+                </label>
+                <label class="radio-option" data-val="10">
+                    <input type="radio" name="timer" value="10"> 10s
+                </label>
+            </div>
+        </div>
+        <div class="field">
+            <label>Default Export Format</label>
+            <div class="radio-group" id="formatGroup">
+                <label class="radio-option active" data-val="png">
+                    <input type="radio" name="format" value="png"> PNG
+                </label>
+                <label class="radio-option" data-val="jpeg">
+                    <input type="radio" name="format" value="jpeg"> JPEG
+                </label>
+                <label class="radio-option" data-val="webp">
+                    <input type="radio" name="format" value="webp"> WebP
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Annotation</div>
+        <div class="field">
+            <label>Default Line Width: <span id="lwVal">4</span>px</label>
+            <div class="slider-row">
+                <input type="range" id="lineWidth" min="1" max="20" value="4">
+            </div>
+        </div>
+        <div class="field">
+            <label>JPEG Quality: <span id="qualVal">90</span>%</label>
+            <div class="slider-row">
+                <input type="range" id="jpegQuality" min="50" max="100" value="90">
+            </div>
+        </div>
+    </div>
+
+    <button class="save-btn" id="saveBtn">Save Settings</button>
+</div>
+<div id="toast">Settings saved!</div>
+<script src="options.js"></script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Snappy Pro — History</title>
+    <style>
+        :root {
+            --bg: #111; --surface: #1e1e1e; --surface2: #2a2a2a;
+            --border: #333; --accent: #3b82f6;
+            --text: #e5e5e5; --dim: #888;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, sans-serif; min-height: 100vh; }
+
+        .topbar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px 24px; border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; background: var(--bg); z-index: 10;
+        }
+        .logo-row { display: flex; align-items: center; gap: 12px; }
+        .logo { width: 32px; height: 32px; border-radius: 8px; overflow: hidden; }
+        .logo img { width: 32px; height: 32px; display: block; }
+        h1 { font-size: 16px; font-weight: 600; color: #fff; }
+        .count { font-size: 12px; color: var(--dim); margin-top: 2px; }
+        .clear-btn {
+            padding: 7px 14px; background: transparent; border: 1px solid var(--border);
+            color: var(--dim); border-radius: 7px; font-size: 12px; cursor: pointer;
+            transition: all 0.15s;
+        }
+        .clear-btn:hover { border-color: #ef4444; color: #ef4444; }
+
+        .content { padding: 24px; }
+
+        .empty {
+            text-align: center; color: var(--dim); padding: 80px 20px;
+            font-size: 14px;
+        }
+        .empty svg { width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.3; display: block; margin: 0 auto 16px; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 14px;
+        }
+
+        .card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 10px; overflow: hidden; cursor: pointer;
+            transition: all 0.15s; position: relative;
+        }
+        .card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+
+        .thumb {
+            width: 100%; aspect-ratio: 16/9;
+            background: #000; display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        .thumb img { width: 100%; height: 100%; object-fit: contain; }
+
+        .card-body { padding: 10px 12px; }
+        .card-name { font-size: 11px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
+        .card-time { font-size: 10px; color: var(--dim); }
+
+        .card-actions {
+            position: absolute; top: 6px; right: 6px;
+            display: none; gap: 4px;
+        }
+        .card:hover .card-actions { display: flex; }
+        .act-btn {
+            width: 26px; height: 26px; background: rgba(0,0,0,0.75); border: none;
+            border-radius: 6px; color: white; cursor: pointer; display: flex;
+            align-items: center; justify-content: center; transition: background 0.15s;
+        }
+        .act-btn:hover { background: var(--accent); }
+        .act-btn.del:hover { background: #ef4444; }
+        .act-btn svg { width: 14px; height: 14px; }
+
+        /* Lightbox */
+        #lightbox {
+            display: none; position: fixed; inset: 0; z-index: 100;
+            background: rgba(0,0,0,0.9); align-items: center; justify-content: center;
+        }
+        #lightbox.open { display: flex; }
+        #lightbox img { max-width: 90vw; max-height: 90vh; object-fit: contain; border-radius: 4px; }
+        #lightbox .lb-close {
+            position: fixed; top: 20px; right: 20px; width: 36px; height: 36px;
+            background: rgba(255,255,255,0.1); border: none; border-radius: 8px;
+            color: white; font-size: 18px; cursor: pointer; display: flex;
+            align-items: center; justify-content: center;
+        }
+        #lightbox .lb-close:hover { background: rgba(255,255,255,0.2); }
+    </style>
+</head>
+<body>
+<div class="topbar">
+    <div class="logo-row">
+        <div class="logo"><img src="icons/icon128.png" alt="Snappy"></div>
+        <div>
+            <h1>Screenshot History</h1>
+            <div class="count" id="countEl">0 captures</div>
+        </div>
+    </div>
+    <button class="clear-btn" id="clearBtn">Clear All</button>
+</div>
+
+<div class="content">
+    <div id="emptyState" class="empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+        </svg>
+        No screenshots yet.<br>Capture something to get started.
+    </div>
+    <div class="grid" id="grid"></div>
+</div>
+
+<div id="lightbox">
+    <button class="lb-close" id="lbClose">✕</button>
+    <img id="lbImg" src="" alt="">
+</div>
+
+<script src="history.js"></script>
+</body>
+</html>

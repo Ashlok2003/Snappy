@@ -1,16 +1,19 @@
 {
     "manifest_version": 3,
-    "name": "Snappy - Screenshot Cropper",
-    "version": "1.0.0",
-    "description": "Capture screenshots of the visible tab, crop visually, and download as PNG.",
+    "name": "Snappy Pro",
+    "version": "2.0.0",
+    "description": "Screenshot & recording suite with annotation, blur, clipboard, and video capture.",
     "permissions": [
         "activeTab",
         "scripting",
-        "downloads"
+        "downloads",
+        "tabCapture",
+        "storage",
+        "offscreen"
     ],
     "action": {
         "default_popup": "popup.html",
-        "default_title": "Snappy Screenshot"
+        "default_title": "Snappy Pro"
     },
     "icons": {
         "16": "icons/icon16.png",
@@ -20,15 +23,25 @@
     "background": {
         "service_worker": "background.js"
     },
+    "options_page": "options.html",
+    "commands": {
+        "capture-visible": {
+            "suggested_key": { "default": "Alt+Shift+S", "mac": "MacCtrl+Shift+S" },
+            "description": "Snappy: Capture visible area"
+        },
+        "capture-region": {
+            "suggested_key": { "default": "Alt+Shift+R", "mac": "MacCtrl+Shift+R" },
+            "description": "Snappy: Capture region (select area)"
+        },
+        "capture-full": {
+            "suggested_key": { "default": "Alt+Shift+F", "mac": "MacCtrl+Shift+F" },
+            "description": "Snappy: Capture full page"
+        }
+    },
     "web_accessible_resources": [
         {
-            "resources": [
-                "styles.css",
-                "content.js"
-            ],
-            "matches": [
-                "<all_urls>"
-            ]
+            "resources": ["styles.css", "image-adjust.js", "content.js", "icons/icon128.png"],
+            "matches": ["<all_urls>"]
         }
     ]
 }

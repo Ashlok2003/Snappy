@@ -1,185 +1,263 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snappy</title>
+    <title>Snappy Pro</title>
     <style>
         :root {
-            --bg: #1a1a1a;
-            --surface: #262626;
-            --border: #404040;
-            --accent: #3b82f6;
-            --accent-hover: #2563eb;
-            --text: #e5e5e5;
-            --text-dim: #a3a3a3;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            --bg: #1a1a1a; --surface: #262626; --surface2: #2e2e2e;
+            --border: #404040; --accent: #3b82f6; --accent-h: #2563eb;
+            --red: #ef4444; --green: #22c55e;
+            --text: #e5e5e5; --dim: #a3a3a3;
         }
-
-        * {
-            box-sizing: border-box;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            width: 280px;
-            margin: 0;
-            padding: 16px;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+            width: 300px; background: var(--bg); color: var(--text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 13px;
         }
-
         /* Header */
         .header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            padding-bottom: 16px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 16px 12px;
             border-bottom: 1px solid var(--border);
         }
-
+        .logo-row { display: flex; align-items: center; gap: 10px; }
         .logo {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            width: 36px; height: 36px;
+            border-radius: 8px; overflow: hidden;
+            flex-shrink: 0;
+        }
+        .logo img { width: 36px; height: 36px; display: block; }
+        .title { font-size: 14px; font-weight: 600; color: #fff; }
+        .subtitle { font-size: 11px; color: var(--dim); }
+        .header-actions { display: flex; gap: 6px; }
+        .icon-btn {
+            width: 28px; height: 28px; background: transparent; border: none;
+            color: var(--dim); cursor: pointer; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.15s;
+        }
+        .icon-btn:hover { background: var(--surface); color: var(--text); }
+        .icon-btn svg { width: 16px; height: 16px; }
+        /* Tabs */
+        .tabs { display: flex; padding: 10px 16px 0; gap: 4px; }
+        .tab {
+            flex: 1; padding: 7px 10px; background: transparent; border: none;
+            color: var(--dim); cursor: pointer; border-radius: 7px 7px 0 0;
+            font-size: 12px; font-weight: 500; transition: all 0.15s;
+            border-bottom: 2px solid transparent; display: flex; align-items: center;
+            justify-content: center; gap: 6px;
+        }
+        .tab svg { width: 13px; height: 13px; }
+        .tab:hover { color: var(--text); }
+        .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+        /* Panels */
+        .panel { display: none; padding: 14px 16px 16px; }
+        .panel.active { display: block; }
+        /* Capture grid */
+        .capture-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+        .cap-btn {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 9px; padding: 12px 8px; color: var(--text);
+            cursor: pointer; display: flex; flex-direction: column;
+            align-items: center; gap: 7px; transition: all 0.15s;
+        }
+        .cap-btn:hover { background: var(--surface2); border-color: #555; transform: translateY(-1px); }
+        .cap-btn:active { transform: translateY(0) scale(0.97); }
+        .cap-btn.primary { background: var(--accent); border-color: var(--accent); color: white; grid-column: span 2; }
+        .cap-btn.primary:hover { background: var(--accent-h); border-color: var(--accent-h); }
+        .cap-btn svg { width: 20px; height: 20px; }
+        .cap-label { font-size: 12px; font-weight: 500; }
+        .cap-sub { font-size: 10px; color: var(--dim); margin-top: -4px; }
+        .cap-btn.primary .cap-sub { color: rgba(255,255,255,0.7); }
+        /* Delay picker row */
+        .delay-row {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-top: 10px; padding: 8px 10px;
+            background: var(--surface); border: 1px solid var(--border);
             border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 18px;
         }
-
-        .title h1 {
-            font-size: 15px;
-            font-weight: 600;
-            margin: 0;
-            color: #fff;
+        .delay-label { font-size: 11px; color: var(--dim); font-weight: 500; }
+        .timer-options { display: flex; gap: 3px; }
+        .timer-opt {
+            padding: 4px 10px; background: transparent; border: 1px solid transparent;
+            color: var(--dim); cursor: pointer; border-radius: 5px; font-size: 11px;
+            font-weight: 600; transition: all 0.15s;
         }
-
-        .title span {
-            font-size: 11px;
-            color: var(--text-dim);
+        .timer-opt:hover { color: var(--text); border-color: var(--border); }
+        .timer-opt.active { background: var(--accent); color: white; border-color: var(--accent); }
+        /* Record tab */
+        .rec-panel .rec-main {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 10px; padding: 16px; margin-bottom: 10px;
         }
-
-        /* Menu Grid */
-        .menu-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 16px;
+        .rec-idle .rec-btn {
+            width: 100%; padding: 12px; background: var(--red);
+            border: none; border-radius: 8px; color: white;
+            font-size: 13px; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            gap: 8px; transition: all 0.15s;
         }
-
-        .menu-btn {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 12px;
-            color: var(--text);
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s ease;
+        .rec-btn:hover { filter: brightness(1.1); }
+        .rec-active { display: none; }
+        .rec-active .rec-info {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 12px;
         }
-
-        .menu-btn:hover {
-            background: #333;
-            border-color: #555;
+        .rec-dot {
+            display: inline-block; width: 8px; height: 8px;
+            background: var(--red); border-radius: 50%; margin-right: 6px;
+            animation: pulse 1s infinite;
         }
-
-        .menu-btn.primary {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: white;
-            grid-column: span 2;
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .rec-timer-display { font-size: 20px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+        .rec-stop {
+            width: 100%; padding: 10px; background: var(--surface2);
+            border: 1px solid var(--border); border-radius: 8px;
+            color: var(--text); font-size: 13px; font-weight: 600;
+            cursor: pointer; display: flex; align-items: center;
+            justify-content: center; gap: 8px; transition: all 0.15s;
         }
-
-        .menu-btn.primary:hover {
-            background: var(--accent-hover);
-        }
-
-        .menu-btn svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        .menu-label {
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        /* Divider */
-        .divider {
-            height: 1px;
-            background: var(--border);
-            margin: 16px 0;
-        }
-
-        /* Status */
+        .rec-gif-btn:hover { filter: brightness(1.15); }
+        .rec-stop:hover { background: #333; border-color: #555; }
+        .rec-stop svg, .rec-btn svg { width: 16px; height: 16px; }
+        .rec-note { font-size: 11px; color: var(--dim); text-align: center; margin-top: 8px; }
+        /* Status bar */
         #status {
-            font-size: 12px;
-            text-align: center;
-            color: var(--text-dim);
-            min-height: 20px;
+            font-size: 11px; text-align: center; color: var(--dim);
+            padding: 8px 16px 10px;
+            border-top: 1px solid var(--border);
+            min-height: 34px; display: flex; align-items: center; justify-content: center;
         }
-
-        #status.error {
-            color: #ef4444;
-        }
+        #status.error { color: var(--red); }
+        #status.success { color: var(--green); }
     </style>
 </head>
-
 <body>
-    <div class="header">
+
+<div class="header">
+    <div class="logo-row">
         <div class="logo">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-                <circle cx="12" cy="13" r="4"></circle>
-            </svg>
+            <img src="icons/icon128.png" alt="Snappy">
         </div>
-        <div class="title">
-            <h1>Snappy Pro</h1>
-            <span>Professional Suite</span>
+        <div>
+            <div class="title">Snappy Pro</div>
+            <div class="subtitle">Screenshot & Recording Suite</div>
         </div>
     </div>
-
-    <div class="menu-grid">
-        <!-- Visible Capture -->
-        <button id="btnVisible" class="menu-btn primary">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+    <div class="header-actions">
+        <button class="icon-btn" id="btnHistory" title="History">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/>
             </svg>
-            <span class="menu-label">Visible Area</span>
+        </button>
+        <button class="icon-btn" id="btnSettings" title="Settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+            </svg>
+        </button>
+    </div>
+</div>
+
+<div class="tabs">
+    <button class="tab active" id="tabScreenshot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+        </svg>
+        Screenshot
+    </button>
+    <button class="tab" id="tabRecord">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/>
+        </svg>
+        Record
+    </button>
+</div>
+
+<!-- Screenshot Panel -->
+<div class="panel active" id="panelScreenshot">
+    <div class="capture-grid">
+        <button id="btnVisible" class="cap-btn primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+            <span class="cap-label">Visible Area</span>
+            <span class="cap-sub">Capture viewport</span>
         </button>
 
-        <!-- Full Page -->
-        <button id="btnFull" class="menu-btn">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 13l-7 7-7-7m14-8l-7 7-7-7" />
+        <button id="btnFull" class="cap-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/>
             </svg>
-            <span class="menu-label">Full Page</span>
+            <span class="cap-label">Full Page</span>
         </button>
 
-        <!-- Timer -->
-        <button id="btnTimer" class="menu-btn">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <button id="btnElement" class="cap-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 3H3v2m0 4v2m0 4v2m0 4v2h2m4 0h2m4 0h2v-2m0-4v-2m0-4V7m0-4h-2M9 3h2"/>
             </svg>
-            <span class="menu-label">3s Delay</span>
+            <span class="cap-label">Element</span>
+        </button>
+
+        <button id="btnRegion" class="cap-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/>
+                <polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/>
+                <line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/>
+            </svg>
+            <span class="cap-label">Region</span>
+        </button>
+
+        <button id="btnTimer" class="cap-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span class="cap-label">Timer</span>
         </button>
     </div>
 
-    <div id="status">Ready to capture</div>
+    <div class="delay-row">
+        <span class="delay-label">Timer delay</span>
+        <div class="timer-options">
+            <button class="timer-opt active" data-delay="3">3s</button>
+            <button class="timer-opt" data-delay="5">5s</button>
+            <button class="timer-opt" data-delay="10">10s</button>
+        </div>
+    </div>
+</div>
 
-    <script src="popup.js"></script>
+<!-- Record Panel -->
+<div class="panel rec-panel" id="panelRecord">
+    <div class="rec-main">
+        <div class="rec-idle" id="recIdle">
+            <div style="display:flex;gap:8px;margin-bottom:8px">
+                <button class="rec-btn" id="btnRecord" style="flex:1">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg>
+                    Record Tab
+                </button>
+                <button class="rec-btn rec-gif-btn" id="btnRecordGIF" style="flex:1;background:#7c3aed">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><rect x="2" y="7" width="20" height="10" rx="2"/><path d="M7 12h3m3 0h2m-2-2v4"/></svg>
+                    GIF
+                </button>
+            </div>
+        </div>
+        <div class="rec-active" id="recActive">
+            <div class="rec-info">
+                <div><span class="rec-dot"></span><span style="color:var(--dim);font-size:12px">Recording</span></div>
+                <div class="rec-timer-display" id="recTimerDisplay">00:00</div>
+            </div>
+            <button class="rec-stop" id="btnStop">
+                <svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
+                Stop & Save
+            </button>
+        </div>
+        <div class="rec-note">Tab audio & video · Saves as WebM</div>
+    </div>
+</div>
+
+<div id="status"></div>
+
+<script src="popup.js"></script>
 </body>
-
 </html>
